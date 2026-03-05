@@ -15,7 +15,10 @@
         <service
             android:name=".incrementService"
             android:enabled="true"
-            android:exported="true"></service>
+            android:exported="true"
+            android:process=":incrementProcess">
+
+        </service>
 
         <activity
             android:name=".MainActivity"
