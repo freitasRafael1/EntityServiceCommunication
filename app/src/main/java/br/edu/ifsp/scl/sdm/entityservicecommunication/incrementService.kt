@@ -11,34 +11,36 @@ import android.os.Message
 class incrementService : Service() {
 
     private inner class IncrementHandler(looper: Looper): Handler(looper) {
-
         override fun handleMessage(msg: Message) {
             super.handleMessage(msg)
-            msg.data.getInt("VALUE").also{
-                InterEntityCommunication.valueLiveData.postValue(it + 1)
-            }
-            stopSelf() //para o serviço se auto eliminar
+
+
+            val valorAtual = msg.arg1
+
+            val intent = Intent("INCREMENT_VALUE_ACTION")
+            intent.putExtra("VALUE", valorAtual + 1)
+
+            intent.setPackage(packageName)
+            sendBroadcast(intent)
+
+            stopSelf()
         }
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        intent?.getIntExtra("VALUE", -1)?.also{ value ->
-            HandlerThread("IncrementThread").apply {
-                start()
-                IncrementHandler(looper).apply{
-                   obtainMessage().apply{
-                       data.putInt("VALUE", value)
-                       sendMessage(this)
-                   }
-                }
+        intent?.getIntExtra("VALUE", -1)?.also { value ->
+            val handlerThread = HandlerThread("IncrementThread")
+            handlerThread.start()
 
-                }
+            val handler = IncrementHandler(handlerThread.looper)
+            val msg = handler.obtainMessage()
 
+
+            msg.arg1 = value
+            handler.sendMessage(msg)
         }
-        return START_NOT_STICKY //forma de reinicialização do servico
+        return START_NOT_STICKY
     }
 
     override fun onBind(intent: Intent): IBinder? = null
-
-
 }
