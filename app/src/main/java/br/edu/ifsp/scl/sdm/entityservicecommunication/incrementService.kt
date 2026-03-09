@@ -8,7 +8,7 @@ import android.os.IBinder
 import android.os.Looper
 import android.os.Message
 
-class IncrementService : Service() {
+class incrementService : Service() {
 
     private inner class IncrementHandler(looper: Looper): Handler(looper) {
 
