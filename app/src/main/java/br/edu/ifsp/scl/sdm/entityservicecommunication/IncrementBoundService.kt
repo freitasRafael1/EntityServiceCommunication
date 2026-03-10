@@ -22,13 +22,16 @@ class IncrementBoundService : Service() {
             }
 
 
-                msg.data.getInt("VALUE").also{
+                msg.data.getInt("VALUE", -1).also{
+                    if(it != -1){
+
                     Log.v(this.javaClass.simpleName, "Returning increment value.")
 
                     clientMessenger.send(Message.obtain().apply {
                         data.putInt("VALUE", it + 1)
                     })
                 }
+                    }
 
                     }
     }
